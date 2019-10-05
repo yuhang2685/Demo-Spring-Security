@@ -14,7 +14,11 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 @EnableWebSecurity
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter{
 
-	/*
+	/* Configure authentication in Spring Boot by override the method below.
+	*  The authentication has the input credential and output principal.
+	*  Also see JavaBrain for alternative method to override 
+	*  (configuration for authentication, psw encoder, authorization): 
+	*  https://www.youtube.com/watch?v=iyXne7dIn7U&list=PLqq-6Pq4lTTYTEooakHchTGglSvkZAjnE&index=4
 	@Bean
 	@Override
 	protected UserDetailsService userDetailsService() {
@@ -26,18 +30,24 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter{
 	}
 	*/
 	
+	
+	// UserDetailsService is an interface. We create MyUserDetailsService implementing it.
 	@Autowired
 	private UserDetailsService userDetailsService;
 	
+	
 	@Bean
 	public AuthenticationProvider authProvider() {
+		
+		// Work with DB (the Identity Store) through provider.
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		
-		// Create service between Controller and DB Model.
+		// Configure provider by setup the userDetailsService between Controller and DB.
 		provider.setUserDetailsService(userDetailsService);
 		
 		// Password encoder.
 		provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+		
 		return provider;
 	}
 
